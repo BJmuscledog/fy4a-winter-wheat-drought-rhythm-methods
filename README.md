@@ -4,6 +4,14 @@ This repository packages the key method code used in our *Remote Sensing of Envi
 
 The goal is to provide a transparent, manuscript-aligned **companion-code repository** for the core analyses, while keeping the scientific choices explicit and reproducible.
 
+## Availability
+
+Code for the workflow is **openly available** in this repository.
+
+Raw FY-4A, VIIRS, TROPOSIF, and meteorological datasets are **not redistributed here** because access is governed by the original data providers and their respective access policies.
+
+This repository therefore provides the **code, configuration, and documentation required to reproduce the workflow**, assuming the user has independent access to the original source datasets described in the manuscript.
+
 ## What this repository covers
 
 The packaged workflow spans:
