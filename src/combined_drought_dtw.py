@@ -17,6 +17,13 @@ import dtw
 import matplotlib.dates as mdates
 from datetime import date, timedelta
 import warnings
+from project_config import (
+    COMBINED_DTW_SMOOTHING,
+    DROUGHT_TIMESERIES_CSV,
+    DTW_CSV_2022,
+    DTW_CSV_2023,
+    PAPER_FIG_DIR,
+)
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # ============== 统一科研绘图格式配置 ==============
@@ -46,10 +53,10 @@ COLOR_2022 = "#a2cffe"  # Deep Blue
 COLOR_2023 = "#FFDD00"  # Bright Yellow
 
 # ===================== 文件路径 =====================
-csv_path_drought = r"F:\G_disk\FY4\data\Drought_GEE\HHH_Wheat_SPEI_SM_Drought_2022_2023_Optimizedn.csv"
-csv_2022_evi = r'F:/G_disk/FY4/data/ancillary_data/dtw/HHH_WinterWheat_MODIS_2022.csv'
-csv_2023_evi = r'F:/G_disk/FY4/data/ancillary_data/dtw/HHH_WinterWheat_MODIS_2023.csv'
-OUT_DIR = r"F:\FY4\outputs_paper_figs"
+csv_path_drought = os.fspath(DROUGHT_TIMESERIES_CSV)
+csv_2022_evi = os.fspath(DTW_CSV_2022)
+csv_2023_evi = os.fspath(DTW_CSV_2023)
+OUT_DIR = os.fspath(PAPER_FIG_DIR)
 os.makedirs(OUT_DIR, exist_ok=True)
 out_fig = os.path.join(OUT_DIR, "Fig_Combined_Drought_DTW.png")
 
@@ -82,7 +89,7 @@ vals22, vals23 = df22_evi['EVI'].values, df23_evi['EVI'].values
 dates22, dates23 = df22_evi["date"].values, df23_evi["date"].values
 
 # Savgol平滑
-def smooth_evi(vals, window=5, poly=2):
+def smooth_evi(vals, window=COMBINED_DTW_SMOOTHING["window"], poly=COMBINED_DTW_SMOOTHING["poly"]):
     n = len(vals)
     wl = min(window, n if n % 2 == 1 else n - 1)
     if wl < 3:
@@ -222,4 +229,3 @@ except Exception:
     pass
 plt.close(fig)
 print(f"✅ Saved combined figure to: {out_fig}")
-

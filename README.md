@@ -1,40 +1,93 @@
-﻿# RSE Method Code Package
+# FY-4A winter wheat drought-rhythm methods
 
-This package curates the key method scripts used in our *Remote Sensing of Environment* study on resolving daytime photosynthetic rhythms of winter wheat under drought stress from FY-4A observations.
+This repository packages the key method code used in our *Remote Sensing of Environment* study on resolving daytime photosynthetic rhythms of winter wheat under drought stress from FY-4A observations.
 
-## Scope
+The goal is to provide a transparent, manuscript-aligned **companion-code repository** for the core analyses, while keeping the scientific choices explicit and reproducible.
 
-The package focuses on the reproducible **method pipeline** rather than all figure drafts, notebooks, and intermediate outputs in the full project. Large local datasets and generated figures are intentionally excluded.
+## What this repository covers
 
-## Pipeline covered
+The packaged workflow spans:
 
 1. **Data harmonization and atmospheric correction**
 2. **BRDF normalization to NBAR-like reflectance**
-3. **Phenological alignment using MODIS EVI + DTW/TWDTW-style matching**
+3. **Phenological alignment using MODIS EVI + DTW-style matching**
 4. **Daytime rhythm metric extraction from hourly NIRv curves**
 5. **Correlation-based diagnosis of environmental controls**
 6. **Pixel-level XGBoost + SHAP attribution**
 
-## Folder structure
+Large local datasets, figure drafts, notebooks, and heavyweight caches are intentionally excluded.
 
-- `src/` — packaged Python scripts with original research logic preserved
-- `docs/METHODS_MAP.md` — mapping from manuscript sections to scripts
-- `requirements.txt` — Python dependencies to recreate the analysis environment
+## Repository structure
 
-## Important note before reuse
+```text
+.
+├── configs/
+│   └── environment_variables.example.txt
+├── docs/
+│   ├── METHODS_MAP.md
+│   └── REPRODUCIBILITY.md
+├── scripts/
+│   └── smoke_check.py
+├── src/
+│   ├── project_config.py
+│   ├── Atmosphere_correction.py
+│   ├── brdf_fy_v2.py
+│   ├── combined_drought_dtw.py
+│   ├── fy6s_atc_func.py
+│   ├── generate_metrics_cache.py
+│   ├── get_kvol_geo_func.py
+│   ├── pixel_shap_utils.py
+│   ├── plot_env_corr_matrix_4panels.py
+│   ├── plot_env_factor_correlations.py
+│   ├── plot_metrics.py
+│   ├── read_data_func.py
+│   ├── region_dtw_align.py
+│   ├── write_tif.py
+│   └── XGBoost_shap_GEE-Adapted.py
+├── CITATION.cff
+├── environment.yml
+├── LICENSE
+└── requirements.txt
+```
 
-These scripts are preserved close to the original research workflow. Most of them still contain **project-specific absolute paths** (for example `F:\...` or `H:\...`). Before running the scripts elsewhere, please search for path variables such as:
+## What changed relative to the original project snapshot
 
-- `BASE_DIR`
-- `OUT_DIR`
-- `BRDF_DIR_2022`, `BRDF_DIR_2023`
-- `WHEAT_MASK_TIF`, `HHH_SHP_PATH`
-- `csv_2022`, `csv_2023`
-- `OUTPUT_BASE_DIR`
+This public version improves the original script bundle in a few important ways:
 
-and replace them with paths valid on your machine.
+- centralizes shared parameters in `src/project_config.py`
+- makes drought/non-drought grouping schemes explicit
+- documents where analysis windows differ across methods
+- provides environment-variable overrides for machine-specific paths
+- adds reproducibility notes, citation metadata, and a lightweight smoke check
 
-## Suggested usage order
+## Quick start
+
+### 1. Create an environment
+
+Conda:
+
+```bash
+conda env create -f environment.yml
+conda activate fy4a-wheat-drought-rhythm
+```
+
+or pip:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Check configuration
+
+The repository still depends on local datasets, but you can verify the configuration layer without running the full workflow:
+
+```bash
+python scripts/smoke_check.py
+```
+
+If your local data paths differ from the original project, set environment variables listed in `configs/environment_variables.example.txt`.
+
+### 3. Suggested workflow order
 
 1. Atmospheric correction: `Atmosphere_correction.py` + `fy6s_atc_func.py`
 2. BRDF normalization: `brdf_fy_v2.py` + `get_kvol_geo_func.py`
@@ -43,23 +96,11 @@ and replace them with paths valid on your machine.
 5. Correlation diagnostics: `plot_env_factor_correlations.py` + `plot_env_corr_matrix_4panels.py`
 6. Attribution: `XGBoost_shap_GEE-Adapted.py`
 
-## Packaged scripts
+## Important reproducibility note
 
-- `Atmosphere_correction.py`
-- `fy6s_atc_func.py`
-- `brdf_fy_v2.py`
-- `get_kvol_geo_func.py`
-- `read_data_func.py`
-- `write_tif.py`
-- `region_dtw_align.py`
-- `combined_drought_dtw.py`
-- `plot_metrics.py`
-- `generate_metrics_cache.py`
-- `plot_env_factor_correlations.py`
-- `plot_env_corr_matrix_4panels.py`
-- `XGBoost_shap_GEE-Adapted.py`
-- `pixel_shap_utils.py`
+This repository is intended as a transparent **companion-code archive**, not yet as a fully packaged end-user software library. The scripts preserve the original research workflow, and some of them still operate in a script-first style. Please read:
 
-## Reproducibility note
+- `docs/METHODS_MAP.md`
+- `docs/REPRODUCIBILITY.md`
 
-This package is intended as a shareable research snapshot of the core method code. It does **not** yet convert the project into a fully parameterized Python package or command-line tool; instead, it preserves the original scripts used to generate the manuscript analyses.
+before reusing the code for a new study.

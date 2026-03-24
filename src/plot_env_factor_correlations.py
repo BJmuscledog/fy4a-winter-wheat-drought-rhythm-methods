@@ -14,6 +14,13 @@ from matplotlib.patches import FancyArrowPatch, Rectangle
 from scipy.stats import spearmanr
 from osgeo import gdal
 import traceback
+from project_config import (
+    CORRELATION_CLASS_SCHEME,
+    CORRELATION_TARGET_DATES,
+    DROUGHT_MASK_PATHS,
+    XGB_OUTPUT_DIR,
+    get_class_scheme,
+)
 
 import importlib.util
 import sys
@@ -88,6 +95,32 @@ DROUGHT_KEEP = {
     # 保留所有干旱等级，不再在这里过滤
     "2022_Drought": DROUGHT_CLASSES | WET_CLASSES,  # 保留所有
     "2023_Wet": DROUGHT_CLASSES | WET_CLASSES,      # 保留所有
+}
+
+# ==== 共享配置覆盖：统一路径、干旱分组和目标日期 ====
+CLASS_SCHEME = get_class_scheme(CORRELATION_CLASS_SCHEME)
+BASE_OUT_DIR = os.fspath(XGB_OUTPUT_DIR)
+YEAR_FILES = {
+    "2022_Drought": os.path.join(
+        BASE_OUT_DIR,
+        "2022_Drought_Results",
+        "pixel_feature_table_2022_Drought.csv",
+    ),
+    "2023_Wet": os.path.join(
+        BASE_OUT_DIR,
+        "2023_Wet_Results",
+        "pixel_feature_table_2023_Wet.csv",
+    ),
+}
+DROUGHT_MASKS = {
+    "2022_Drought": os.fspath(DROUGHT_MASK_PATHS["2022"]),
+    "2023_Wet": os.fspath(DROUGHT_MASK_PATHS["2023"]),
+}
+DROUGHT_CLASSES = set(CLASS_SCHEME["drought"])
+WET_CLASSES = set(CLASS_SCHEME["wet"])
+DROUGHT_KEEP = {
+    "2022_Drought": DROUGHT_CLASSES | WET_CLASSES,
+    "2023_Wet": DROUGHT_CLASSES | WET_CLASSES,
 }
 
 # ==== 变量列表 ====
@@ -840,10 +873,7 @@ def plot_significance_overlay(r_2022, p_2022, r_2023, p_2023, save_path, alpha=0
 
 def main():
     # 目标日期限制：仅 2022-04-23 和 2023-04-25
-    target_dates = {
-        "2022_Drought": {pd.to_datetime("2022-04-23").date()},
-        "2023_Wet": {pd.to_datetime("2023-04-25").date()},
-    }
+    target_dates = CORRELATION_TARGET_DATES
     # 加载 2022 与 2023
     df_22, vars_22 = load_year_df("2022_Drought")
     df_23, vars_23 = load_year_df("2023_Wet")
@@ -1049,4 +1079,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

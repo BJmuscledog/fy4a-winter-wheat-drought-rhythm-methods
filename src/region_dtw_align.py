@@ -18,6 +18,7 @@ import os
 import sys
 import warnings
 from datetime import date, timedelta  # Added for calculating shading dates
+from project_config import DTW_CSV_2022, DTW_CSV_2023, DTW_SMOOTHING, PAPER_FIG_DIR
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # ---------- Parameters and Style (Inherit SPEI/SM style) ----------
@@ -38,10 +39,10 @@ COLOR_2022 = "#a2cffe"  # Deep Blue (2022 EVI Reference)
 COLOR_2023 = "#FFDD00"  # Bright Yellow/Gold (2023 EVI DTW Aligned)
 
 # --- User File Paths ---
-csv_2022 = r'F:/G_disk/FY4/data/ancillary_data/dtw/HHH_WinterWheat_MODIS_2022.csv'
-csv_2023 = r'F:/G_disk/FY4/data/ancillary_data/dtw/HHH_WinterWheat_MODIS_2023.csv'
+csv_2022 = os.fspath(DTW_CSV_2022)
+csv_2023 = os.fspath(DTW_CSV_2023)
 use_index = 'EVI'
-OUT_DIR = r'F:\FY4\outputs_paper_figs' # User-specified output directory
+OUT_DIR = os.fspath(PAPER_FIG_DIR) # User-specified output directory
 os.makedirs(OUT_DIR, exist_ok=True)
 out_fig_fp = os.path.join(OUT_DIR, 'Fig_EVI_DTW_Aligned_MarJul.png')
 out_fig_zoom_fp = os.path.join(OUT_DIR, 'Fig_EVI_DTW_KeyZoom.png')
@@ -119,7 +120,7 @@ vals22, vals23 = df22[use_index].values, df23[use_index].values
 dates22, dates23 = df22["date"].values, df23["date"].values
 
 # ---------- Smoothing Function (Savitzky-Golay) ----------
-def smooth(vals, window=7, poly=3):
+def smooth(vals, window=DTW_SMOOTHING["window"], poly=DTW_SMOOTHING["poly"]):
     """Savgol smoothing, dynamically adjusts window size to be odd and less than data length."""
     n = len(vals)
     wl = min(window, n if n % 2 == 1 else n - 1)

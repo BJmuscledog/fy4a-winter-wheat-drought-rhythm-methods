@@ -10,6 +10,7 @@ import pandas as pd
 from write_tif import write_multiplebands_tiff
 from read_data_func import readtiff
 from get_kvol_geo_func import rou_li_sparse_k_vol_geo
+from project_config import BRDF_CORRECTION_FACTOR_CLIP, BRDF_KERNEL_PARAMETERS
 
 from sklearn.linear_model import LinearRegression as LR
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -44,12 +45,14 @@ def brdf_fy_func_v2(fy_dir, angle_dir, output_dir,
     suz_12 = readtiff(angle_list[5 * suz_id + 4], 1)
 
     # BRDF 模型参数（统一使用，确保拟合和应用一致）
-    A_PARAM = 1  # h/b 比值
-    B_PARAM = 1  # b/r 比值（稀疏植被）
+    A_PARAM = BRDF_KERNEL_PARAMETERS["a"]  # h/b 比值
+    B_PARAM = BRDF_KERNEL_PARAMETERS["b"]  # b/r 比值（稀疏植被）
+    clip_min, clip_max = BRDF_CORRECTION_FACTOR_CLIP
     
     print(f"\n{'='*70}")
     print(f"BRDF 校正 V2 - 日期索引: {runnumber_id}")
     print(f"Li-Sparse 模型参数: a={A_PARAM}, b={B_PARAM}")
+    print(f"Correction-factor clip: [{clip_min}, {clip_max}]")
     print(f"参考几何方法: 视角校正（保留方位角，星下点观测）")
     print(f"处理波段: {fy_band}")
     print(f"{'='*70}\n")
@@ -202,7 +205,7 @@ def brdf_fy_func_v2(fy_dir, angle_dir, output_dir,
             
             # 异常值保护：限制 ANTF 的合理范围
             # 通常 BRDF 校正因子在 0.5-2.0 之间
-            antf = np.clip(antf, 0.1, 10.0)
+            antf = np.clip(antf, clip_min, clip_max)
 
             # 7. 应用 BRDF 校正
             brdf_corrected = fy_6s * antf

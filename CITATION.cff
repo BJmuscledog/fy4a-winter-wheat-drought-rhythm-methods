@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "FY-4A winter wheat drought-rhythm methods"
+message: "If you use this repository, please cite the associated Remote Sensing of Environment study and this software record."
+type: software
+authors:
+  - family-names: Li
+    given-names: Ziqian
+  - family-names: Fan
+    given-names: Jinlong
+  - family-names: Li
+    given-names: Ying
+  - family-names: Piles
+    given-names: Maria
+  - family-names: Wu
+    given-names: Menxin
+  - family-names: Gong
+    given-names: Yali
+  - family-names: Zeng
+    given-names: Yelu
+  - family-names: Miao
+    given-names: Shuangxi
+  - family-names: Su
+    given-names: Wei
+  - family-names: Liu
+    given-names: Junming
+  - family-names: Huang
+    given-names: Jianxi
+repository-code: "https://github.com/BJmuscledog/fy4a-winter-wheat-drought-rhythm-methods"
+license: MIT

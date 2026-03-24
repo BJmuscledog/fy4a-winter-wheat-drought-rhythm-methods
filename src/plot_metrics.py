@@ -43,6 +43,19 @@ from shapely.geometry import box
 import matplotlib.lines as mlines
 from matplotlib.patches import Rectangle 
 from shapely.geometry import Point
+from project_config import (
+    BASE_DATA_DIR,
+    DROUGHT_MASK_PATHS,
+    HHH_SHP_PATH as SHARED_HHH_SHP_PATH,
+    METRIC_CLASS_SCHEME,
+    METRIC_HOURS,
+    METRIC_OUTPUT_DIR,
+    METRIC_SAMPLE_PIXELS,
+    METRIC_TARGET_DATES,
+    METRIC_VISUAL_CLIP_PERCENTILES,
+    WHEAT_MASK_TIF as SHARED_WHEAT_MASK_TIF,
+    get_class_scheme,
+)
 warnings.filterwarnings("ignore")
 # 添加在文件顶部的 import 区
 from scipy.stats import skew, ttest_rel, wilcoxon
@@ -79,8 +92,8 @@ SPECIFIC_GRIDS = [
 ]
 # Drought mask (SMPct) paths
 DROUGHT_MASKS = {
-    "2022": r"F:\G_disk\FY4\data\Drought_GEE\drive-download-20251227T184021Z-1-001\SMPct_DroughtClass_20220423.tif",
-    "2023": r"F:\G_disk\FY4\data\Drought_GEE\drive-download-20251227T184021Z-1-001\SMPct_DroughtClass_20230425.tif",
+    "2022": os.fspath(DROUGHT_MASK_PATHS["2022"]),
+    "2023": os.fspath(DROUGHT_MASK_PATHS["2023"]),
 }
 # Classes to keep
 DROUGHT_CLASSES = {3, 4}  # 中度+重度
@@ -93,6 +106,20 @@ BRDF_DIR_2023 = os.path.join(BASE_DIR, r'2023_0423_week\Brdf_hhh')
 WHEAT_MASK_TIF = r'F:\G_disk\FY4\Winter_wheat_map\Winter_wheat_map.tif'
 HHH_SHP_PATH = r'F:\风云数据\Fy_p1_data\Shp\Huanghuaihai\Huanghuaihai.shp' # For defining overall study area extent and background
 OUT_DIR = r'F:\FY4\outputs_paper_figs\box_grid_Analysis'
+os.makedirs(OUT_DIR, exist_ok=True)
+
+# Shared repository configuration overrides. We keep these assignments here so
+# the original script structure stays recognizable, but the effective values
+# now come from project_config.py.
+CLASS_SCHEME = get_class_scheme(METRIC_CLASS_SCHEME)
+DROUGHT_CLASSES = set(CLASS_SCHEME["drought"])
+NONDROUGHT_CLASSES = set(CLASS_SCHEME["wet"])
+BASE_DIR = os.fspath(BASE_DATA_DIR)
+BRDF_DIR_2022 = os.fspath(BASE_DATA_DIR / '2022_0423_week' / 'Brdf_hhh')
+BRDF_DIR_2023 = os.fspath(BASE_DATA_DIR / '2023_0423_week' / 'Brdf_hhh')
+WHEAT_MASK_TIF = os.fspath(SHARED_WHEAT_MASK_TIF)
+HHH_SHP_PATH = os.fspath(SHARED_HHH_SHP_PATH)
+OUT_DIR = os.fspath(METRIC_OUTPUT_DIR)
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # Cache (for heavy intermediate computations)
@@ -117,6 +144,11 @@ HOURS = list(range(9,17)) # 9..16 BJT
 
 # Sampling for speed: if mask contains many pixels, sample this many pixels for distribution (None = use all)
 SAMPLE_PIXELS = 5000
+
+DATES_2022 = list(METRIC_TARGET_DATES["2022"])
+DATES_2023 = list(METRIC_TARGET_DATES["2023"])
+HOURS = list(METRIC_HOURS)
+SAMPLE_PIXELS = METRIC_SAMPLE_PIXELS
 
 # ============== 统一科研绘图格式配置 ==============
 FONT_FAMILY = "Times New Roman"
@@ -1771,7 +1803,7 @@ def plot_violin_four_groups_grid(metrics_groups, metrics_to_plot, out_dir,
         vals_all = df_plot['value'].to_numpy()
         vals_all = vals_all[np.isfinite(vals_all)]
         if len(vals_all) > 5:
-            p_low, p_high = np.percentile(vals_all, [1, 99])  # 1-99百分位
+            p_low, p_high = np.percentile(vals_all, METRIC_VISUAL_CLIP_PERCENTILES)
             # 调试信息：检查裁剪前的数据分布
             print(f"[INFO] {metric}: Before clipping - n_total={len(vals_all)}, "
                   f"median={np.nanmedian(vals_all):.4f}, mean={np.nanmean(vals_all):.4f}, "
@@ -2921,5 +2953,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

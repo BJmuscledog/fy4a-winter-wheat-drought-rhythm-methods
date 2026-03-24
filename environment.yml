@@ -1,0 +1,21 @@
+name: fy4a-wheat-drought-rhythm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib
+  - seaborn
+  - statsmodels
+  - geopandas
+  - shapely
+  - gdal
+  - py6s
+  - joblib
+  - tqdm
+  - scikit-learn
+  - xgboost
+  - shap
+  - dtw-python

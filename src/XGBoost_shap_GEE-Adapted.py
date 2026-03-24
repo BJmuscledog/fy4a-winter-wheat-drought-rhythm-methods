@@ -34,6 +34,15 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from xgboost import XGBRegressor
 import shap
+from project_config import (
+    ANCILLARY_DATA_DIR,
+    ML_CLASS_SCHEME,
+    WHEAT_MASK_TIF as SHARED_WHEAT_MASK_TIF,
+    XGB_DEBUG_SUBSAMPLE_N,
+    XGB_OUTPUT_DIR,
+    XGB_YEARLY_CONFIGS as SHARED_XGB_YEARLY_CONFIGS,
+    build_yearly_class_mapping,
+)
 
 # GDAL
 from osgeo import gdal, osr
@@ -46,6 +55,10 @@ DEBUG_MODE = False  # True 时会做限量处理
 BASE_DATA_DIR   = r'F:\风云数据\Fy_p2_data'
 ANC_BASE_DIR    = r'F:\G_disk\FY4\data\ancillary_data'
 OUTPUT_BASE_DIR = r'F:\FY4\outputs_final\pixel_level_xgb_shap_gee'
+
+# Shared repository configuration overrides.
+ANC_BASE_DIR = os.fspath(ANCILLARY_DATA_DIR)
+OUTPUT_BASE_DIR = os.fspath(XGB_OUTPUT_DIR)
 
 # 🆕 ERA5 环境因子数据路径（与 plot_env_factor_correlations.py 一致）
 # ERA5 日尺度数据
@@ -66,6 +79,7 @@ ERA5_BAND_TO_INDEX = {name: idx + 1 for idx, name in enumerate(ERA5_BANDS)}
 
 # 静态掩膜
 WHEAT_MASK_TIF = r'F:\G_disk\FY4\Winter_wheat_map\Winter_wheat_map.tif'
+WHEAT_MASK_TIF = os.fspath(SHARED_WHEAT_MASK_TIF)
 
 # 干旱分级图路径
 DROUGHT_MASKS = {
@@ -80,6 +94,9 @@ DROUGHT_CLASSES = {
 }
 
 # ==================== 🔥 目标变量选择 ====================
+# Shared class-scheme override for public repository consistency.
+DROUGHT_CLASSES = build_yearly_class_mapping(ML_CLASS_SCHEME)
+
 AVAILABLE_TARGETS = {
     'nirv': 'target_nirv',
     't_peak': 'target_t_peak',
@@ -202,6 +219,22 @@ YEARLY_CONFIGS = [
         "gee_env_tif": GEE_ENV_TIF_2023,  # 可选：GEE 环境因子 TIF
         "par_k": 4.5,
     },
+]
+
+# Shared yearly-config override so public and manuscript-facing scripts read the
+# same date windows and input locations by default.
+YEARLY_CONFIGS = [
+    {
+        "year_tag": cfg["year_tag"],
+        "brdf_dir": os.fspath(cfg["brdf_dir"]),
+        "target_dates": cfg["target_dates"],
+        "era5_env_raster": os.fspath(cfg["era5_env_raster"]),
+        "era5_hourly_raster": os.fspath(cfg["era5_hourly_raster"]),
+        "drought_tif": os.fspath(cfg["drought_tif"]),
+        "gee_env_tif": os.fspath(cfg["gee_env_tif"]),
+        "par_k": cfg["par_k"],
+    }
+    for cfg in SHARED_XGB_YEARLY_CONFIGS
 ]
 
 # 其它参数
@@ -1083,9 +1116,9 @@ def train_and_shap(df, out_dir, feat_cols, targets):
     os.makedirs(out_dir, exist_ok=True)
     df.columns = [c.lower() for c in df.columns]
 
-    if DEBUG_MODE and len(df) > 1000:
-        print(f"\n>>> DEBUG MODE: Subsampling to 1000 rows")
-        df = df.sample(n=1000, random_state=42)
+    if DEBUG_MODE and len(df) > XGB_DEBUG_SUBSAMPLE_N:
+        print(f"\n>>> DEBUG MODE: Subsampling to {XGB_DEBUG_SUBSAMPLE_N} rows")
+        df = df.sample(n=XGB_DEBUG_SUBSAMPLE_N, random_state=42)
 
     print("\n[INFO] Feature columns for training:", feat_cols)
     print(f"[INFO] Training targets: {targets}")

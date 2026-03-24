@@ -22,6 +22,7 @@ from matplotlib import cm, colors
 from matplotlib.patches import Rectangle
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.stats import spearmanr
+from project_config import CORRELATION_CLASS_SCHEME, XGB_OUTPUT_DIR, get_class_scheme
 
 plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams["axes.unicode_minus"] = False
@@ -52,6 +53,9 @@ ENV_TO_TIMESCALE = {name: timescale for name, timescale in ENV_CHOICES}
 
 # 变量顺序
 VAR_ORDER = RHYTHM_VARS + ENV_KEYS
+CLASS_SCHEME = get_class_scheme(CORRELATION_CLASS_SCHEME)
+DRY_CLASSES = set(CLASS_SCHEME["drought"])
+WET_CLASSES = set(CLASS_SCHEME["wet"])
 
 # 场景映射
 SCENARIO_MAP = {
@@ -229,7 +233,7 @@ def load_env_rhythm_corr_static(scenario_key):
 
 def load_rhythm_rhythm_corr(scenario_key):
     """从原始特征表计算节律指标之间的相关性"""
-    base_dir = r"F:\FY4\outputs_final\pixel_level_xgb_shap_gee"
+    base_dir = os.fspath(XGB_OUTPUT_DIR)
     year_tag, _ = SCENARIO_MAP[scenario_key]
     
     if "2022" in year_tag:
@@ -246,9 +250,9 @@ def load_rhythm_rhythm_corr(scenario_key):
         
         # 根据场景筛选数据
         if "dry" in scenario_key:
-            df = df[df['drought_class'].isin([2, 3, 4])].copy()
+            df = df[df['drought_class'].isin(DRY_CLASSES)].copy()
         else:
-            df = df[df['drought_class'].isin([0, 1])].copy()
+            df = df[df['drought_class'].isin(WET_CLASSES)].copy()
         
         rhythm_rhythm_corr = {}
         for i, vi in enumerate(RHYTHM_VARS):
@@ -485,4 +489,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

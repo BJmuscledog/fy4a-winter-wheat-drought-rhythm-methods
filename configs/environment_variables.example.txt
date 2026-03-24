@@ -1,0 +1,36 @@
+# Optional environment-variable overrides for the FY-4A winter wheat drought-rhythm repository
+#
+# Windows PowerShell example:
+#   $env:FY4_BASE_DATA_DIR="D:\FY4_project\data"
+#   $env:FY4_ANCILLARY_DATA_DIR="D:\FY4_project\ancillary"
+#   python scripts/smoke_check.py
+#
+# Linux/macOS example:
+#   export FY4_BASE_DATA_DIR="/data/FY4_project/data"
+#   export FY4_ANCILLARY_DATA_DIR="/data/FY4_project/ancillary"
+#   python scripts/smoke_check.py
+
+FY4_BASE_DATA_DIR=
+FY4_ANCILLARY_DATA_DIR=
+FY4_OUTPUT_ROOT=
+FY4_PAPER_FIG_DIR=
+FY4_METRIC_OUTPUT_DIR=
+FY4_XGB_OUTPUT_DIR=
+FY4_WHEAT_MASK_TIF=
+FY4_HHH_SHP_PATH=
+FY4_DTW_CSV_2022=
+FY4_DTW_CSV_2023=
+FY4_DROUGHT_TIMESERIES_CSV=
+FY4_DROUGHT_MASK_2022=
+FY4_DROUGHT_MASK_2023=
+FY4_ERA5_ENV_RASTER_2022=
+FY4_ERA5_ENV_RASTER_2023=
+FY4_ERA5_HOURLY_RASTER_2022=
+FY4_ERA5_HOURLY_RASTER_2023=
+FY4_GEE_ENV_TIF_2022=
+FY4_GEE_ENV_TIF_2023=
+FY4_METRIC_CLASS_SCHEME=
+FY4_CORRELATION_CLASS_SCHEME=
+FY4_ML_CLASS_SCHEME=
+FY4_METRIC_SAMPLE_PIXELS=
+FY4_XGB_DEBUG_SUBSAMPLE_N=
