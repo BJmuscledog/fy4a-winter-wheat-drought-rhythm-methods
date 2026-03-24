@@ -1,0 +1,16 @@
+﻿numpy
+pandas
+matplotlib
+seaborn
+scipy
+statsmodels
+geopandas
+shapely
+GDAL
+Py6S
+joblib
+tqdm
+scikit-learn
+xgboost
+shap
+dtw-python
