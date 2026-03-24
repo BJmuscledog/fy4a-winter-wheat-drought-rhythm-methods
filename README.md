@@ -8,6 +8,9 @@ The goal is to provide a transparent, manuscript-aligned **companion-code reposi
 
 Code for the workflow is **openly available** in this repository.
 
+The first versioned public release is available at:
+`https://github.com/BJmuscledog/fy4a-winter-wheat-drought-rhythm-methods/releases/tag/v1.0.0`
+
 Raw FY-4A, VIIRS, TROPOSIF, and meteorological datasets are **not redistributed here** because access is governed by the original data providers and their respective access policies.
 
 This repository therefore provides the **code, configuration, and documentation required to reproduce the workflow**, assuming the user has independent access to the original source datasets described in the manuscript.

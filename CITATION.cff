@@ -2,6 +2,8 @@ cff-version: 1.2.0
 title: "FY-4A winter wheat drought-rhythm methods"
 message: "If you use this repository, please cite the associated Remote Sensing of Environment study and this software record."
 type: software
+version: "1.0.0"
+date-released: 2026-03-24
 authors:
   - family-names: Li
     given-names: Ziqian
@@ -26,4 +28,5 @@ authors:
   - family-names: Huang
     given-names: Jianxi
 repository-code: "https://github.com/BJmuscledog/fy4a-winter-wheat-drought-rhythm-methods"
+url: "https://github.com/BJmuscledog/fy4a-winter-wheat-drought-rhythm-methods/releases/tag/v1.0.0"
 license: MIT
